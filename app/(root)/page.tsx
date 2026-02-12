@@ -35,7 +35,7 @@ const Home = () => {
         {/* CTA */}
         <div className="mt-10 flex flex-col items-center gap-4">
           <Link
-            href="/workplace"
+            href="/extract"
             className="px-8 py-4 text-sm font-medium text-white bg-black rounded-md hover:bg-neutral-800 transition-all duration-200 shadow-sm hover:shadow-md"
           >
             Let's Go →
