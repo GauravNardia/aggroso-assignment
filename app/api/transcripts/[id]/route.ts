@@ -3,11 +3,12 @@ import { db } from "@/database/drizzle";
 import { tasks } from "@/database/schema";
 import { eq } from "drizzle-orm";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  const transcriptId = params.id;
+interface Params {
+  params: Promise<Record<string, string>>;
+}
+
+export async function GET(req: Request, { params }: Params) {
+  const transcriptId = (await params).id;
 
   const result = await db
     .select()
