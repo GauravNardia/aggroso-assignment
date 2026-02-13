@@ -14,6 +14,7 @@ import { Textarea } from "../ui/textarea"
 import { Button } from "../ui/button"
 import { Loader } from "lucide-react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
  
 const formSchema = z.object({
   transcript: z
@@ -24,6 +25,7 @@ const formSchema = z.object({
 
 const ExtractForm = () => {
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,9 +35,37 @@ const ExtractForm = () => {
     },
   })
 
-   function onSubmit(data: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    console.log("transcript", data)
+   async function onSubmit(data: z.infer<typeof formSchema>) {
+      try {
+      setLoading(true)
+
+      const response = await fetch("/api/extract", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          transcript: data.transcript,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Extraction failed")
+      }
+      const result = await response.json()
+      
+      router.push(`/extract/${result.transcriptId}`)
+      router.refresh()
+      form.reset()
+
+    } catch (error) {
+      console.error("Extraction error:", error)
+      form.setError("transcript", {
+        message: "Failed to extract action items. Please try again.",
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

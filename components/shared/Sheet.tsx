@@ -1,5 +1,7 @@
 "use client"
-import { Button } from "@/components/ui/button"
+
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetClose,
@@ -7,15 +9,30 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { NAV_LINKS } from "@/constants"
-import Image from "next/image"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+} from "@/components/ui/sheet";
+import { NAV_LINKS } from "@/constants";
+import Image from "next/image";
+import Link from "next/link";
+
+type TranscriptHistory = {
+  id: string;
+  createdAt: string;
+  taskCount: number;
+};
 
 const SheetPage = () => {
-    const pathname = usePathname();
-    
+  const [history, setHistory] = useState<TranscriptHistory[]>([]);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      const res = await fetch("/api/transcripts/recent");
+      const data = await res.json();
+      setHistory(data);
+    };
+
+    fetchHistory();
+  }, []);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -34,12 +51,13 @@ const SheetPage = () => {
           <SheetTitle>
             <SheetClose asChild>
               <Link href="/extract" className="flex items-center gap-1">
-                <p>🚀 SmartTracker</p>
+                🚀 SmartTracker
               </Link>
             </SheetClose>
           </SheetTitle>
         </SheetHeader>
 
+        {/* NAV LINKS */}
         <div>
           {NAV_LINKS.map((link) => (
             <SheetClose key={link.href} asChild>
@@ -59,21 +77,33 @@ const SheetPage = () => {
           ))}
         </div>
 
-        <div className="px-3">
-            <div>
-                <p className="font-bold text-neutral-500 text-sm">RECENT TRANSCRIPTS</p>
-            </div>
-          <div className="space-y-1 text-sm text-gray-700 mt-5">
-            <SheetClose asChild>
-            <div className="rounded-md hover:bg-gray-100 cursor-pointer">
-              Feb 12 - 3 tasks
-            </div>
-            </SheetClose>
+        {/* HISTORY */}
+        <div className="px-3 mt-6">
+          <p className="font-bold text-neutral-500 text-sm">
+            RECENT TRANSCRIPTS
+          </p>
+
+          <div className="space-y-2 text-sm text-gray-700 mt-4">
+            {history.length === 0 && (
+              <p className="text-gray-400">No transcripts yet</p>
+            )}
+
+            {history.map((item) => (
+              <SheetClose key={item.id} asChild>
+                <Link
+                  href={`/extract/${item.id}`}
+                  className="block rounded-md hover:bg-gray-100 p-2"
+                >
+                  {new Date(item.createdAt).toLocaleDateString()} –{" "}
+                  {item.taskCount} tasks
+                </Link>
+              </SheetClose>
+            ))}
           </div>
         </div>
       </SheetContent>
     </Sheet>
-  )
-}
+  );
+};
 
-export default SheetPage
+export default SheetPage;

@@ -3,6 +3,7 @@ import { openai } from "@/lib/openai";
 import { tasks, transcripts } from "@/database/schema";
 import { db } from "@/database/drizzle";
 import { extractionPrompt } from "@/lib/prompt";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req: Request) {
   try {
@@ -15,7 +16,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // OpenAI
+    // 🔥 Call OpenAI
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -24,25 +25,41 @@ export async function POST(req: Request) {
       response_format: { type: "json_object" },
     });
 
-    const parsed = JSON.parse(completion.choices[0].message.content!);
+    const content = completion.choices[0].message.content;
 
-    // Save transcript
+    if (!content) {
+      throw new Error("Empty AI response");
+    }
+
+    const parsed = JSON.parse(content);
+
+ const tasksArray = parsed.actionItems;
+
+if (!Array.isArray(tasksArray)) {
+  throw new Error("Invalid AI response format");
+}
+    // 🔥 Save transcript first
     const [savedTranscript] = await db
       .insert(transcripts)
       .values({ text: transcript })
       .returning();
 
-    // Save tasks
+    // 🔥 Save tasks
     const insertedTasks = await Promise.all(
-      parsed.map((item: any) =>
-        db.insert(tasks).values({
-          transcriptId: savedTranscript.id,
-          task: item.task,
-          owner: item.owner,
-          due_date: item.due_date,
-        }).returning()
+      tasksArray.map((item: any) =>
+        db
+          .insert(tasks)
+          .values({
+            transcriptId: savedTranscript.id,
+            task: item.task,
+            owner: item.owner,
+            due_date: item.due_date ?? null,
+          })
+          .returning()
       )
     );
+
+    revalidatePath(`/`, "layout")
 
     return NextResponse.json({
       transcriptId: savedTranscript.id,
@@ -50,7 +67,8 @@ export async function POST(req: Request) {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("Extraction error:", error);
+
     return NextResponse.json(
       { error: "Extraction failed" },
       { status: 500 }

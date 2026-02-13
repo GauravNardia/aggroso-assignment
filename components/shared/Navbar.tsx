@@ -9,9 +9,9 @@ const Navbar = () => {
   return (
     <section className='z-10 w-full flex border border-b justify-between items-center'>
         <div className='py-4 px-3'>
-            <h1 className='text-xl font-bold'>
+            <Link href="/" className='text-xl font-bold'>
              🚀 SmartTracker
-            </h1>
+            </Link> 
         </div>
 
         <div className={`${pathname === "/" ? "hidden" : "py-4 px-2 flex gap-3 justify-center items-center"}  `}>
