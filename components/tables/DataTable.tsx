@@ -13,17 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "../ui/input";
-
-export type Task = {
-  id: string
-  transcriptId: string | null
-  task: string | null
-  owner: string | null
-  due_date: string | null
-  completed: boolean | null
-  createdAt: Date | null
-}
-
+import { Task } from "@/types";
 
 interface Props {
   initialTasks: Task[];
@@ -60,7 +50,7 @@ export default function DataTable({ initialTasks }: Props) {
     );
   };
 
-    // Start Editing
+  // Start Editing
   const startEdit = (task: Task) => {
     setEditingId(task.id);
     setEditValues(task);

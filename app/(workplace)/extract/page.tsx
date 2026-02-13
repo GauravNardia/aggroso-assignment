@@ -1,5 +1,4 @@
 import ExtractForm from '@/components/forms/ExtractForm'
-import React from 'react'
 
 const Extract = () => {
   return (

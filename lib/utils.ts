@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
-// Simple Date Formatter
+// Date Formatter
 export const formatDate = (date: Date | null) => {
   if (!date) return "Unknown";
 

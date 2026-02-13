@@ -2,7 +2,7 @@ import React from "react";
 import Sidebar from "@/components/shared/Sidebar";
 import { db } from "@/database/drizzle";
 import { transcripts, tasks } from "@/database/schema";
-import { desc, eq, sql } from "drizzle-orm";
+import { count, desc, eq } from "drizzle-orm";
 
 export default async function WorkplaceLayout({
   children,
@@ -10,18 +10,16 @@ export default async function WorkplaceLayout({
   children: React.ReactNode;
 }) {
 
-  // 🔥 Fetch last 5 transcripts with task count
-  const history = await db
-    .select({
-      id: transcripts.id,
-      createdAt: transcripts.createdAt,
-      taskCount: sql<number>`count(${tasks.id})`,
-    })
-    .from(transcripts)
-    .leftJoin(tasks, eq(tasks.transcriptId, transcripts.id))
-    .groupBy(transcripts.id)
-    .orderBy(desc(transcripts.createdAt))
-    .limit(5);
+const history = await db
+  .select({
+    id: transcripts.id,
+    createdAt: transcripts.createdAt,
+    taskCount: count(tasks.id),
+  })
+  .from(transcripts)
+  .leftJoin(tasks, eq(tasks.transcriptId, transcripts.id))
+  .groupBy(transcripts.id)
+  .orderBy(desc(transcripts.createdAt));
 
   return (
     <div className="flex h-screen bg-gray-100">

@@ -4,21 +4,20 @@ import { tasks } from '@/database/schema';
 import { eq } from 'drizzle-orm';
 
 
-declare interface Params {
+interface Params {
   params: Promise<Record<string, string>>;
 }
 
-
 const page = async({ params }: Params) => {
      const id = (await params).id;
-    const taskList = await db
-    .select()
-    .from(tasks)
-    .where(eq(tasks.transcriptId, id));
+     const taskList = await db
+     .select()
+     .from(tasks)
+     .where(eq(tasks.transcriptId, id));
 
-    if(!taskList) return 
-
-
+    if(!taskList) {
+      console.error("TaskList not found")
+    }
 
   return (
     <section className="w-full max-w-4xl mx-auto flex flex-col justify-center items-center">

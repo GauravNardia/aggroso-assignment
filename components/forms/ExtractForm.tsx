@@ -15,27 +15,21 @@ import { Button } from "../ui/button"
 import { Loader } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
- 
-const formSchema = z.object({
-  transcript: z
-    .string()
-    .min(5, "Transcript must be at least 5 characters.")
-})
-
+import { extractSchema } from "@/lib/validations/form.validation"
 
 const ExtractForm = () => {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof extractSchema>>({
+    resolver: zodResolver(extractSchema),
     defaultValues: {
       transcript: "",
 
     },
   })
 
-   async function onSubmit(data: z.infer<typeof formSchema>) {
+   async function onSubmit(data: z.infer<typeof extractSchema>) {
       try {
       setLoading(true)
 
@@ -56,7 +50,6 @@ const ExtractForm = () => {
       
       router.push(`/extract/${result.transcriptId}`)
       router.refresh()
-      form.reset()
 
     } catch (error) {
       console.error("Extraction error:", error)

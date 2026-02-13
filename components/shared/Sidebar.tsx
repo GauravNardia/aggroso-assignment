@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
+import { HistoryItem } from "@/types";
 
-interface HistoryItem {
-  id: string;
-  createdAt: Date | null;
-  taskCount: number;
-}
 
 interface Props {
   history: HistoryItem[];
@@ -44,7 +40,7 @@ const Sidebar = ({ history }: Props) => {
             href={`/extract/${item.id}`}
             className="block p-2 rounded-md hover:bg-gray-100"
           >
-            {formatDate(item.createdAt)} – {item.taskCount} tasks
+            {formatDate(item.createdAt)} - {item.taskCount} tasks
           </Link>
         ))}
       </div>

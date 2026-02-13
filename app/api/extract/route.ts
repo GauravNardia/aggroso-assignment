@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🔥 Call OpenAI
+    // Call OpenAI
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -32,19 +32,20 @@ export async function POST(req: Request) {
     }
 
     const parsed = JSON.parse(content);
+    const tasksArray = parsed.actionItems;
 
- const tasksArray = parsed.actionItems;
+    if (!Array.isArray(tasksArray)) {
+    throw new Error("Invalid AI response format");
+    }
 
-if (!Array.isArray(tasksArray)) {
-  throw new Error("Invalid AI response format");
-}
-    // 🔥 Save transcript first
+
+    // Save transcript first
     const [savedTranscript] = await db
       .insert(transcripts)
       .values({ text: transcript })
       .returning();
 
-    // 🔥 Save tasks
+    // Save tasks
     const insertedTasks = await Promise.all(
       tasksArray.map((item: any) =>
         db
@@ -53,7 +54,7 @@ if (!Array.isArray(tasksArray)) {
             transcriptId: savedTranscript.id,
             task: item.task,
             owner: item.owner,
-            due_date: item.due_date ?? null,
+            due_date: item.due_date,
           })
           .returning()
       )
