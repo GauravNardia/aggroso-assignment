@@ -10,15 +10,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { NAV_LINKS } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
-
-type TranscriptHistory = {
-  id: string;
-  createdAt: string;
-  taskCount: number;
-};
+import { NAV_LINKS } from "@/constants";
+import { TranscriptHistory } from "@/types";
 
 const SheetPage = () => {
   const [history, setHistory] = useState<TranscriptHistory[]>([]);

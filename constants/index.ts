@@ -5,4 +5,3 @@ export const NAV_LINKS = [
         icon: "/assets/icons/add.svg"
     }
 ];
-

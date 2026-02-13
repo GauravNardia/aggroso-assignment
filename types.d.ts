@@ -13,3 +13,9 @@ export type HistoryItem = {
   createdAt: Date | null;
   taskCount: number;
 }
+
+export type TranscriptHistory = {
+  id: string;
+  createdAt: string;
+  taskCount: number;
+};

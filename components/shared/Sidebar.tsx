@@ -18,7 +18,7 @@ const Sidebar = ({ history }: Props) => {
 
       <Link
         href="/extract"
-        className="flex gap-3 py-4 text-sm font-medium"
+        className="flex gap-3 py-4 text-sm font-medium items-center"
       >
         + New Extraction
       </Link>
