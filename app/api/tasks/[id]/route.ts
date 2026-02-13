@@ -25,7 +25,7 @@ export async function PATCH(req: Request, { params }: Params) {
   return NextResponse.json({ success: true });
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: Params) {
   const id = (await params).id;
 
   await db.
