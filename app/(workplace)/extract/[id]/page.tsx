@@ -21,7 +21,7 @@ const page = async({ params }: Params) => {
 
 
   return (
-    <section className="w-full max-w-4xl border mx-auto flex flex-col justify-center items-center">
+    <section className="w-full max-w-4xl mx-auto flex flex-col justify-center items-center">
         <DataTable initialTasks={taskList} />
     </section>
   )
